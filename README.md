@@ -1,13 +1,25 @@
 # RusselComplete
 
-## GitHub configuration
+## 项目目标
 
-To set up your new GitHub repository, follow these steps:
+1. 证明罗素公理体系能实现lean4中的各个tactic(相当于说明罗素公理体系的完备性),包括:rw,intro,by_contra (目前想到的就这些,有待补充)
+2. 写出一个C++程序(也可以是其它语言的,但本人目前只会C++ QAQ),能将lean4证明翻译为markdown文件,并且做到:中间完全没有跳步\
+也就是说,全程只使用带入规则(引入定理可以视为特殊的带入规则)和分离规则的一份证明\
+这需要解析语法,展开证明过程(就是lean4里面带有前提的那些定理,相当于是在已经证明了前提的证明过程中间开始证明另外一个定理)等等
 
-* Under your repository name, click **Settings**.
-* In the **Actions** section of the sidebar, click "General".
-* Check the box **Allow GitHub Actions to create and approve pull requests**.
-* Click the **Pages** section of the settings sidebar.
-* In the **Source** dropdown menu, select "GitHub Actions".
+## 目前进展
 
-After following the steps above, you can remove this section from the README file.
+具体见代码注释
+
+1. 说明了 `exact`,`have`,`apply`,定理代入变量 是罗素公理体系中能实现的。这是简单的,不需要解析算式
+2. 在数学上说明了`rw`和`intro`被包含在罗素公理体系中\
+`rw`:按照表达式树从下往上一层层证明:这一个节点对应的式子`rw`之后是等价的, 方法是证明 $\lnot$ 和 $\lor$ 的`rw`等价性\
+`intro`:就是说要证明, 如果我在有前提 $h$ 的情况下能证明 $p$, 那么我就能证明 $h \to p$. 只需要把罗素公理证明中的所有定理 $q$ 都改成 $h \to q$, 再依次替换原本的证明过程. 这只需要证明这个推理过程: 如果 $h \to p$ 且 $h \to (p \to q)$, 则 $h \to q$, 对应于原本的分离定律
+
+## 目前困难
+
+1. 我想要自行定义一个`Prop`, 这样可以避免使用lean4中原本就有的各种tactic和定理, 保证我的证明是正确的
+2. 目前我只是用自然语言证明了这些tactic的正确性(也就是说对于任意的仅包含以上tactic的lean4证明,我可以给出一个对应的不跳步的罗素公理体系的证明), 我希望我能自己手写tactic, 比如说采用元编程之类的方法, 在lean4中实现这个过程(相当于手写一个`rw`和`intro`, 或者说有这个必要吗)
+3. 转换证明的C++程序我还不会写
+4. 仍然存在大量常用定理不会证, 如 $\land$ 的结合律, 分配律
+5. 缺乏对于lean4中的tactic的了解,暂时想不到还有什么需要证明的tactic
